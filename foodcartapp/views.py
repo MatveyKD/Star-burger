@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.templatetags.static import static
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 
 from .models import Product, Order, OrderProduct
 
@@ -61,24 +62,26 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    try:
-        content = request.data
-        print(content)
-        order, _ = Order.objects.get_or_create(
-            name=content['firstname'],
-            surname=content['lastname'],
-            phone_number=content['phonenumber'],
-            address=content['address']
-        )
-        print(order)
-        for product in content['products']:
-            OrderProduct.objects.get_or_create(
-                product=Product.objects.get(id=product['product']),
-                order=Order.objects.get(id=order.id),
-                quantity=product['quantity']
-            )
-    except ValueError as error:
+    content = request.data
+    if content.get('products') == None:
         return Response({
-            'error': error,
+            'error': 'Products must be in json'
         })
+    elif not isinstance(content['products'], list):
+        return Response({
+            'error': 'Products key not presented in list'
+        })
+
+    order = Order.objects.create(
+        name=content['firstname'],
+        surname=content['lastname'],
+        phone_number=content['phonenumber'],
+        address=content['address']
+    )
+    for product in content['products']:
+        OrderProduct.objects.create(
+            product=Product.objects.get(id=product['product']),
+            order=Order.objects.get(id=order.id),
+            quantity=product['quantity']
+        )
     return JsonResponse({})
