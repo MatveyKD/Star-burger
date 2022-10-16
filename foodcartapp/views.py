@@ -4,7 +4,24 @@ from django.templatetags.static import static
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from rest_framework.serializers import Serializer, ModelSerializer, ValidationError
+from rest_framework.serializers import CharField
+
 from .models import Product, Order, OrderProduct
+
+
+class OrderProductSerializer(ModelSerializer):
+    class Meta:
+        model = OrderProduct
+        fields = ['product', 'quantity']
+
+
+class OrderSerializer(ModelSerializer):
+    products = OrderProductSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['firstname', 'lastname', 'phonenumber', 'address', 'products']
 
 
 def banners_list_api(request):
@@ -62,51 +79,23 @@ def product_list_api(request):
 @api_view(['POST'])
 def register_order(request):
     content = request.data
-    if content.get('products') == None:
-        return Response({
-            'error': 'Products must be in json'
-        })
-    elif not isinstance(content['products'], list):
-        return Response({
-            'error': 'Products key not presented in list'
-        })
-    elif content.get('firstname') == None:
-        return Response({
-            'error': 'Firstname must be not empty'
-        })
-    elif not isinstance(content['firstname'], str):
-        return Response({
-            'error': 'Firstname must be correct string in json'
-        })
-    elif content.get('lastname') == None:
-        return Response({
-            'error': 'Lastname must be not empty'
-        })
-    elif not isinstance(content['lastname'], str):
-        return Response({
-            'error': 'Lastname must be correct string in json'
-        })
-    elif content.get('address') == None:
-        return Response({
-            'error': 'Address must be not empty'
-        })
-    elif not isinstance(content['address'], str):
-        return Response({
-            'error': 'Address must be correct string in json'
-        })
-    elif content.get('phonenumber') == None:
-        return Response({
-            'error': 'Phonenumber must be not empty'
-        })
-    elif not isinstance(content['phonenumber'], str):
-        return Response({
-            'error': 'Phonenumber must be correct string in json'
-        })
+    serializer = OrderSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    products = request.data.get('products', [])
+    if not isinstance(products, list):
+        raise ValidationError('Expects products field be a list')
+    if not products:
+        raise ValidationError('Products field must be not null')
+
+    for fields in products:
+        serializer = OrderProductSerializer(data=fields)
+        serializer.is_valid(raise_exception=True)
 
     order = Order.objects.create(
-        name=content['firstname'],
-        surname=content['lastname'],
-        phone_number=content['phonenumber'],
+        firstname=content['firstname'],
+        lastname=content['lastname'],
+        phonenumber=content['phonenumber'],
         address=content['address']
     )
     for product in content['products']:
@@ -115,4 +104,4 @@ def register_order(request):
             order=Order.objects.get(id=order.id),
             quantity=product['quantity']
         )
-    return JsonResponse({})
+    return Response({})
