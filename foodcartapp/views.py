@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer, ModelSerializer, ValidationError
 from rest_framework.serializers import CharField
 
+from rest_framework.renderers import JSONRenderer
+
 from .models import Product, Order, OrderProduct
 
 
@@ -17,7 +19,7 @@ class OrderProductSerializer(ModelSerializer):
 
 
 class OrderSerializer(ModelSerializer):
-    products = OrderProductSerializer(many=True)
+    products = OrderProductSerializer(many=True, allow_empty=False)
 
     class Meta:
         model = Order
@@ -78,30 +80,24 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    content = request.data
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    products = request.data.get('products', [])
-    if not isinstance(products, list):
-        raise ValidationError('Expects products field be a list')
-    if not products:
-        raise ValidationError('Products field must be not null')
-
-    for fields in products:
-        serializer = OrderProductSerializer(data=fields)
-        serializer.is_valid(raise_exception=True)
-
     order = Order.objects.create(
-        firstname=content['firstname'],
-        lastname=content['lastname'],
-        phonenumber=content['phonenumber'],
-        address=content['address']
+        firstname=serializer.validated_data['firstname'],
+        lastname=serializer.validated_data['lastname'],
+        phonenumber=serializer.validated_data['phonenumber'],
+        address=serializer.validated_data['address']
     )
-    for product in content['products']:
-        OrderProduct.objects.create(
-            product=Product.objects.get(id=product['product']),
-            order=Order.objects.get(id=order.id),
-            quantity=product['quantity']
+    products = []
+    for product in serializer.validated_data['products']:
+        products.append(
+            OrderProduct.objects.create(
+                product=product['product'],
+                order=Order.objects.get(id=order.id),
+                quantity=product['quantity']
+            )
         )
-    return Response({})
+    order.products = products
+    response = JSONRenderer().render(OrderSerializer(order).data)
+    return Response(response)
