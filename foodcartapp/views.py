@@ -95,9 +95,9 @@ def register_order(request):
             OrderProduct.objects.create(
                 product=product['product'],
                 order=Order.objects.get(id=order.id),
-                quantity=product['quantity']
+                quantity=product['quantity'],
+                price=product['product'].price
             )
         )
-    order.products = products
     response = JSONRenderer().render(OrderSerializer(order).data)
     return Response(response)
