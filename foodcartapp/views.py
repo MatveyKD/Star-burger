@@ -10,6 +10,7 @@ from rest_framework.serializers import CharField
 from rest_framework.renderers import JSONRenderer
 
 from .models import Product, Order, OrderProduct
+from django.db import transaction
 
 
 class OrderProductSerializer(ModelSerializer):
@@ -78,6 +79,7 @@ def product_list_api(request):
     })
 
 
+@transaction.atomic
 @api_view(['POST'])
 def register_order(request):
     serializer = OrderSerializer(data=request.data)
@@ -94,7 +96,7 @@ def register_order(request):
         products.append(
             OrderProduct.objects.create(
                 product=product['product'],
-                order=Order.objects.get(id=order.id),
+                order=order,
                 quantity=product['quantity'],
                 price=product['product'].price
             )
