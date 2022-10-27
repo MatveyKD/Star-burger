@@ -149,6 +149,20 @@ class Order(models.Model):
         max_length=40
     )
 
+    statuses = [
+        ('NP', 'Not processed'),
+        ('CK', 'Cooking'),
+        ('DL', 'Delivering'),
+        ('CP', 'Completed')
+    ]
+
+    status = models.CharField(
+        'Статус заказа',
+        choices=statuses,
+        max_length=13,
+        default='NP'
+    )
+
     objects = QuerySetManager.as_manager()
 
     def __str__(self):
