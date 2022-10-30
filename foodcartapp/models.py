@@ -149,6 +149,12 @@ class Order(models.Model):
         max_length=40
     )
 
+    comment = models.CharField(
+        'Комментарий к заказу',
+        max_length=40,
+        null=True
+    )
+
     statuses = [
         ('NP', 'Not processed'),
         ('CK', 'Cooking'),
