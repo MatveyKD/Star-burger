@@ -153,7 +153,8 @@ class Order(models.Model):
     comment = models.CharField(
         'Комментарий к заказу',
         max_length=40,
-        null=True
+        null=True,
+        blank=True
     )
 
     registered = models.DateTimeField(
@@ -162,11 +163,13 @@ class Order(models.Model):
     )
     called = models.DateTimeField(
         'Время звонка',
-        null=True
+        null=True,
+        blank=True
     )
     delivered = models.DateTimeField(
         'Время доставки',
-        null=True
+        null=True,
+        blank=True
     )
 
     statuses = [
@@ -176,11 +179,23 @@ class Order(models.Model):
         ('CP', 'Completed')
     ]
 
+    payments = [
+        ('EL', 'Electronic'),
+        ('CS', 'Cash')
+    ]
+
     status = models.CharField(
         'Статус заказа',
         choices=statuses,
         max_length=13,
         default='NP'
+    )
+
+    payment = models.CharField(
+        'Способ оплаты',
+        max_length=10,
+        choices=payments,
+        default='CS'
     )
 
     objects = QuerySetManager.as_manager()
