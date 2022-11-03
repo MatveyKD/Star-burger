@@ -153,8 +153,15 @@ class Order(models.Model):
     comment = models.CharField(
         'Комментарий к заказу',
         max_length=40,
-        null=True,
         blank=True
+    )
+
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.SET_NULL,
+        verbose_name='Какой ресторан готовит заказ',
+        blank=True,
+        null=True,
     )
 
     registered = models.DateTimeField(
