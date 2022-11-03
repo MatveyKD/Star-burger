@@ -92,7 +92,7 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    orders = Order.objects.get_total_cost().exclude(status='CP')
+    orders = Order.objects.get_total_cost().exclude(status='CP').order_by("-status")
     all_restaurants = Restaurant.objects.all()
     restaurants_menu = RestaurantMenuItem.objects.all()\
         .values("restaurant", "product", "availability")
