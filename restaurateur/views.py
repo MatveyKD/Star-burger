@@ -7,8 +7,16 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 
+from environs import Env
+import requests
+from geopy import distance
+
 
 from foodcartapp.models import Product, Restaurant, Order, RestaurantMenuItem
+
+
+env = Env()
+env.read_env()
 
 
 class Login(forms.Form):
@@ -90,13 +98,38 @@ def view_restaurants(request):
     })
 
 
+def fetch_coordinates(apikey, address):
+    base_url = "https://geocode-maps.yandex.ru/1.x"
+    response = requests.get(base_url, params={
+        "geocode": address,
+        "apikey": apikey,
+        "format": "json",
+    })
+    response.raise_for_status()
+    found_places = response.json()['response']['GeoObjectCollection']['featureMember']
+
+    if not found_places:
+        return None
+
+    most_relevant = found_places[0]
+    lon, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
+    return lon, lat
+
+
+def return_distance(restuarant_dict):
+    return restuarant_dict['distance']
+
+
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
+    api_key = env("API_KEY")
     orders = Order.objects.get_total_cost().exclude(status='CP').order_by("-status")
     all_restaurants = Restaurant.objects.all()
     restaurants_menu = RestaurantMenuItem.objects.all()\
         .values("restaurant", "product", "availability")
     for order in orders:
+        if not order.latitude:
+            order.longitude, order.latitude = fetch_coordinates(api_key, order.address)
         order_products = [product.product.id for product in order.products.all()]
         unavailable_restaurants = [
             item for item in restaurants_menu
@@ -109,6 +142,18 @@ def view_orders(request):
         ]
 
         order.restaurants = available_restaurants
+        order.restaurant_distances = sorted([
+            {
+                'restaurant': restaurant.name,
+                'distance': round(
+                    distance.distance(
+                        (order.latitude, order.longitude),
+                        (restaurant.latitude, restaurant.longitude)
+                    ).km, 3
+                )
+            }
+            for restaurant in available_restaurants
+        ], key=return_distance)
 
     return render(request, template_name='order_items.html', context={
         'order_items': orders

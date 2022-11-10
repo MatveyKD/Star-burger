@@ -20,6 +20,20 @@ class Restaurant(models.Model):
         max_length=50,
         blank=True,
     )
+    latitude = models.DecimalField(
+        'широта',
+        max_digits=8,
+        decimal_places=6,
+        blank=True,
+        null=True
+    )
+    longitude = models.DecimalField(
+        'долгота',
+        max_digits=8,
+        decimal_places=6,
+        blank=True,
+        null=True
+    )
 
     class Meta:
         verbose_name = 'ресторан'
@@ -203,6 +217,21 @@ class Order(models.Model):
         max_length=10,
         choices=payments,
         default='CS'
+    )
+
+    latitude = models.DecimalField(
+        'широта',
+        max_digits=8,
+        decimal_places=6,
+        blank=True,
+        null=True
+    )
+    longitude = models.DecimalField(
+        'долгота',
+        max_digits=8,
+        decimal_places=6,
+        blank=True,
+        null=True
     )
 
     objects = QuerySetManager.as_manager()
