@@ -115,6 +115,13 @@ class OrderProductInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    search_fields = [
+        "firstname",
+        "lastname",
+        "phonenumber",
+        "status",
+        "address"
+    ]
     inlines = [
         OrderProductInline,
     ]
