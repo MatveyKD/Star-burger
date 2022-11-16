@@ -123,7 +123,7 @@ def return_distance(restuarant_dict):
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
     api_key = env("API_KEY")
-    orders = Order.objects.get_total_cost().exclude(status='CP').order_by("-status")
+    orders = Order.objects.get_total_cost().exclude(status='CP').order_by("-status").prefetch_related('products')
     all_restaurants = Restaurant.objects.all()
     restaurants_menu = RestaurantMenuItem.objects.all()\
         .values("restaurant", "product", "availability")
