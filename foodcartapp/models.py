@@ -148,20 +148,24 @@ class QuerySetManager(models.QuerySet):
 class Order(models.Model):
     firstname = models.CharField(
         'Имя заказчика',
-        max_length=20
+        max_length=20,
+        db_index=True
     )
     lastname = models.CharField(
         'Фамилия заказчика',
-        max_length=20
+        max_length=20,
+        db_index=True
     )
 
     phonenumber = PhoneNumberField(
-        "Номер телефона заказчика"
+        "Номер телефона заказчика",
+        db_index=True
     )
 
     address = models.CharField(
         'Адрес заказа',
-        max_length=40
+        max_length=40,
+        db_index=True
     )
 
     comment = models.CharField(
@@ -197,7 +201,7 @@ class Order(models.Model):
         ('NP', 'Not processed'),
         ('CK', 'Cooking'),
         ('DL', 'Delivering'),
-        ('CP', 'Completed')
+        ('CP', 'Completed'),
     ]
 
     payments = [
@@ -209,7 +213,8 @@ class Order(models.Model):
         'Статус заказа',
         choices=statuses,
         max_length=13,
-        default='NP'
+        default='NP',
+        db_index=True
     )
 
     payment = models.CharField(
