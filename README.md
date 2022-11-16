@@ -54,7 +54,7 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Определите переменную окружения `SECRET_KEY` и `API_KEY`([yandex-геолокатор](https://developer.tech.yandex.ru/services/). Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
+Определите переменную окружения `SECRET_KEY` и `API_KEY`([yandex-геолокатор](https://developer.tech.yandex.ru/services/)). Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
 ```sh
 SECRET_KEY=django-insecure-0if40nf4nf93n4
 API_KEY=tfg56306d48-93c1-345-397d9-uj4a5c0efcc7
