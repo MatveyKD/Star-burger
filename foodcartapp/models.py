@@ -194,16 +194,16 @@ class Order(models.Model):
         null=True,
     )
 
-    registered = models.DateTimeField(
+    registered_at = models.DateTimeField(
         'Время регистрации заказа',
         default=timezone.now
     )
-    called = models.DateTimeField(
+    called_at = models.DateTimeField(
         'Время звонка',
         null=True,
         blank=True
     )
-    delivered = models.DateTimeField(
+    delivered_at = models.DateTimeField(
         'Время доставки',
         null=True,
         blank=True
