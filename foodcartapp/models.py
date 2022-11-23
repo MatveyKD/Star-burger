@@ -146,6 +146,18 @@ class QuerySetManager(models.QuerySet):
 
 
 class Order(models.Model):
+    statuses = [
+        ('NP', 'Not processed'),
+        ('CK', 'Cooking'),
+        ('DL', 'Delivering'),
+        ('CP', 'Completed'),
+    ]
+
+    payment_methods = [
+        ('EL', 'Electronic'),
+        ('CS', 'Cash')
+    ]
+
     firstname = models.CharField(
         'Имя заказчика',
         max_length=35,
@@ -196,18 +208,6 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-
-    statuses = [
-        ('NP', 'Not processed'),
-        ('CK', 'Cooking'),
-        ('DL', 'Delivering'),
-        ('CP', 'Completed'),
-    ]
-
-    payment_methods = [
-        ('EL', 'Electronic'),
-        ('CS', 'Cash')
-    ]
 
     status = models.CharField(
         'Статус заказа',
