@@ -204,7 +204,7 @@ class Order(models.Model):
         ('CP', 'Completed'),
     ]
 
-    payments = [
+    payment_methods = [
         ('EL', 'Electronic'),
         ('CS', 'Cash')
     ]
@@ -217,10 +217,10 @@ class Order(models.Model):
         db_index=True
     )
 
-    payment = models.CharField(
+    payment_method = models.CharField(
         'Способ оплаты',
         max_length=10,
-        choices=payments
+        choices=payment_methods
     )
 
     latitude = models.DecimalField(
