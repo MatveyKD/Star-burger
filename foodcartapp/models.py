@@ -168,9 +168,8 @@ class Order(models.Model):
         db_index=True
     )
 
-    comment = models.CharField(
+    comment = models.TextField(
         'Комментарий к заказу',
-        max_length=40,
         blank=True
     )
 
