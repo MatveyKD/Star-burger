@@ -13,7 +13,7 @@ from geopy import distance
 
 
 from foodcartapp.models import Product, Restaurant, Order, RestaurantMenuItem
-
+from star_burger.settings import yandex_api_key
 
 env = Env()
 env.read_env()
@@ -122,14 +122,13 @@ def return_distance(restuarant_dict):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    api_key = env("API_KEY")
     orders = Order.objects.get_total_cost().exclude(status='CP').order_by("-status").prefetch_related('products')
     all_restaurants = Restaurant.objects.all()
     restaurants_menu = RestaurantMenuItem.objects.all()\
         .values("restaurant", "product", "availability")
     for order in orders:
         if not order.latitude:
-            order.longitude, order.latitude = fetch_coordinates(api_key, order.address)
+            order.longitude, order.latitude = fetch_coordinates(yandex_api_key, order.address)
         order_products = [product.product.id for product in order.products.all()]
         unavailable_restaurants = [
             item for item in restaurants_menu
