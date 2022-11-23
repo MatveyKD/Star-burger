@@ -142,7 +142,7 @@ class RestaurantMenuItem(models.Model):
 
 class QuerySetManager(models.QuerySet):
     def get_total_cost(self):
-        return self.annotate(total_cost=Sum(F("order_products__price") * F("order_products__quantity")))
+        return self.annotate(total_cost=Sum(F("products__price") * F("products__quantity")))
 
 
 class Order(models.Model):
@@ -256,7 +256,7 @@ class OrderProduct(models.Model):
         Order,
         verbose_name="Заказ",
         on_delete=models.CASCADE,
-        related_name="order_products"
+        related_name="products"
     )
 
     quantity = models.IntegerField(
