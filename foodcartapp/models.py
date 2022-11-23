@@ -221,8 +221,7 @@ class Order(models.Model):
     payment = models.CharField(
         'Способ оплаты',
         max_length=10,
-        choices=payments,
-        default='CS'
+        choices=payments
     )
 
     latitude = models.DecimalField(
