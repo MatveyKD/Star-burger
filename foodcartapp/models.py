@@ -148,12 +148,12 @@ class QuerySetManager(models.QuerySet):
 class Order(models.Model):
     firstname = models.CharField(
         'Имя заказчика',
-        max_length=20,
+        max_length=35,
         db_index=True
     )
     lastname = models.CharField(
         'Фамилия заказчика',
-        max_length=20,
+        max_length=35,
         db_index=True
     )
 
@@ -164,7 +164,7 @@ class Order(models.Model):
 
     address = models.CharField(
         'Адрес заказа',
-        max_length=40,
+        max_length=100,
         db_index=True
     )
 
