@@ -178,6 +178,7 @@ class Order(models.Model):
         Restaurant,
         on_delete=models.SET_NULL,
         verbose_name='Какой ресторан готовит заказ',
+        related_name="orders",
         blank=True,
         null=True,
     )
@@ -249,6 +250,7 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(
         Product,
         verbose_name="Заказанный продукт",
+        related_name="order_products",
         on_delete=models.CASCADE,
     )
 
