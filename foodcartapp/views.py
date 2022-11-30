@@ -91,15 +91,14 @@ def register_order(request):
         phonenumber=serializer.validated_data['phonenumber'],
         address=serializer.validated_data['address']
     )
-    products = []
-    for product in serializer.validated_data['products']:
-        products.append(
-            OrderProduct.objects.create(
-                product=product['product'],
-                order=order,
-                quantity=product['quantity'],
-                price=product['product'].price
-            )
+    products = [
+        OrderProduct(
+            product=product['product'],
+            order=order,
+            quantity=product['quantity'],
+            price=product['product'].price
         )
+        for product in serializer.validated_data['products']]
+    OrderProduct.objects.bulk_create(products)
     response = JSONRenderer().render(OrderSerializer(order).data)
     return Response(response)
