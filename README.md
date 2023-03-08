@@ -157,6 +157,7 @@ Parcel будет следить за файлами в каталоге `bundle
 
     #!/bin/bash
     set -e
+    curl -H "X-Rollbar-Access-Token: PROJECT ACESS TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "dc1f74dee5", "rollbar_name": "john", "local_username": "cin-cui", "comment": "Deployment has started", "status": "started"}'
     git --git-dir='/opt/Star-burger/.git' pull
     /opt/Star-burger/venv/bin/python -m pip install -r /opt/Star-burger/requirements.txt
     sudo apt update
@@ -167,9 +168,10 @@ Parcel будет следить за файлами в каталоге `bundle
     /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py migrate --noinput
     systemctl daemon-reload
     systemctl restart star-burger.service
+    curl -H "X-Rollbar-Access-Token: PROJECT ACESS TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "dc1f74dee5", "rollbar_name": "john", "local_username": "cin-cui", "comment": "Deployment has ended", "status": "succeeded"}'
     echo Деплой прошел успешно
 
-Данный скрипт скачает код, установит зависимости, соберет статику и миграции, запустит npm и перезапустит все Systemd сервисы. При успешном выполнении выведется "Деплой прошел успешно".
+Данный скрипт скачает код, установит зависимости, соберет статику и миграции, запустит npm, перезапустит все Systemd сервисы и сообщит о деплое в Rollbar. При успешном выполнении выведется "Деплой прошел успешно".
 
 
 ## Цели проекта
