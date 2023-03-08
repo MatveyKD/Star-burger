@@ -56,10 +56,16 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Определите переменную окружения `SECRET_KEY` и `API_KEY`([yandex-геолокатор](https://developer.tech.yandex.ru/services/)). Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
+Определите переменные окружения. Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
 ```sh
 SECRET_KEY=django-insecure-0if40nf4nf93n4
 API_KEY=tfg56306d48-93c1-345-397d9-uj4a5c0efcc7
+ROLLBAR_TOKEN=cc8576978d4339678gr8fe2afe
+ALLOWED_HOSTS=127.0.0.1
+DB_USER=myuser
+DB_NAME=myproject
+DB_PASSWORD=admin
+DEBUG=False
 ```
 
 Создайте файл базы данных SQLite и отмигрируйте её следующей командой:
@@ -151,6 +157,11 @@ Parcel будет следить за файлами в каталоге `bundle
 - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `API_KEY` - [зарегистрироваться в yandex-разработчик](https://developer.tech.yandex.ru/services/)
+- `ROLLBAR` - [токен от rollbar](https://rollbar.com)
+- `DB_USER` - имя пользователя Postgre
+- `DB_NAME` - имя бд Postgre
+- `DB_PASSWORD` - пароль от бд Postgre
+
 
 
 ## Быстрое обновление кода на сервере
