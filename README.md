@@ -150,28 +150,6 @@ Parcel будет следить за файлами в каталоге `bundle
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `API_KEY` - [зарегистрироваться в yandex-разработчик](https://developer.tech.yandex.ru/services/)
 
-
-## Быстрое обновление кода на сервере
-
-Для быстрого обновление кода на сервере запустите данный bash-скрипт:
-
-    #!/bin/bash
-    set -e
-    git --git-dir='/opt/Star-burger/.git' pull
-    /opt/Star-burger/venv/bin/python -m pip install -r /opt/Star-burger/requirements.txt
-    sudo apt update
-    sudo apt install --yes nodejs
-    sudo apt install --yes npm
-    npm ci --dev --prefix /opt/Star-burger
-    /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py collectstatic --noinput
-    /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py migrate --noinput
-    systemctl daemon-reload
-    systemctl restart star-burger.service
-    echo Деплой прошел успешно
-
-Данный скрипт скачает код, установит зависимости, соберет статику и миграции, запустит npm и перезапустит все Systemd сервисы. При успешном выполнении выведется "Деплой прошел успешно".
-
-
 ## Цели проекта
 
 Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org). За основу был взят код проекта [FoodCart](https://github.com/Saibharath79/FoodCart).
