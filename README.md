@@ -2,6 +2,8 @@
 
 Это сайт сети ресторанов Star Burger. Здесь можно заказать превосходные бургеры с доставкой на дом.
 
+Пример работы: [https://daytemneetotdomenpliz.tk/](https://daytemneetotdomenpliz.tk/)
+
 ![скриншот сайта](https://dvmn.org/filer/canonical/1594651635/686/)
 
 
@@ -54,10 +56,16 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Определите переменную окружения `SECRET_KEY` и `API_KEY`([yandex-геолокатор](https://developer.tech.yandex.ru/services/)). Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
+Определите переменные окружения. Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
 ```sh
 SECRET_KEY=django-insecure-0if40nf4nf93n4
 API_KEY=tfg56306d48-93c1-345-397d9-uj4a5c0efcc7
+ROLLBAR_TOKEN=cc8576978d4339678gr8fe2afe
+ALLOWED_HOSTS=127.0.0.1
+DB_USER=myuser
+DB_NAME=myproject
+DB_PASSWORD=admin
+DEBUG=False
 ```
 
 Создайте файл базы данных SQLite и отмигрируйте её следующей командой:
@@ -149,6 +157,35 @@ Parcel будет следить за файлами в каталоге `bundle
 - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `API_KEY` - [зарегистрироваться в yandex-разработчик](https://developer.tech.yandex.ru/services/)
+- `ROLLBAR` - [токен от rollbar](https://rollbar.com)
+- `DB_USER` - имя пользователя Postgre
+- `DB_NAME` - имя бд Postgre
+- `DB_PASSWORD` - пароль от бд Postgre
+
+
+
+## Быстрое обновление кода на сервере
+
+Для быстрого обновление кода на сервере запустите данный bash-скрипт:
+
+    #!/bin/bash
+    set -e
+    curl -H "X-Rollbar-Access-Token: PROJECT ACESS TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "dc1f74dee5", "rollbar_name": "john", "local_username": "cin-cui", "comment": "Deployment has started", "status": "started"}'
+    git --git-dir='/opt/Star-burger/.git' pull
+    /opt/Star-burger/venv/bin/python -m pip install -r /opt/Star-burger/requirements.txt
+    sudo apt update
+    sudo apt install --yes nodejs
+    sudo apt install --yes npm
+    npm ci --dev --prefix /opt/Star-burger
+    /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py collectstatic --noinput
+    /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py migrate --noinput
+    systemctl daemon-reload
+    systemctl restart star-burger.service
+    curl -H "X-Rollbar-Access-Token: PROJECT ACESS TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "dc1f74dee5", "rollbar_name": "john", "local_username": "cin-cui", "comment": "Deployment has ended", "status": "succeeded"}'
+    echo Деплой прошел успешно
+
+Данный скрипт скачает код, установит зависимости, соберет статику и миграции, запустит npm, перезапустит все Systemd сервисы и сообщит о деплое в Rollbar. При успешном выполнении выведется "Деплой прошел успешно".
+
 
 ## Цели проекта
 
