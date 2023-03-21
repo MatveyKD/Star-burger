@@ -62,9 +62,7 @@ SECRET_KEY=django-insecure-0if40nf4nf93n4
 API_KEY=tfg56306d48-93c1-345-397d9-uj4a5c0efcc7
 ROLLBAR_TOKEN=cc8576978d4339678gr8fe2afe
 ALLOWED_HOSTS=127.0.0.1
-DB_USER=myuser
-DB_NAME=myproject
-DB_PASSWORD=admin
+DATABASE_URL=postgres://myuser:admin@localhost/myproject
 DEBUG=False
 ```
 
@@ -157,10 +155,8 @@ Parcel будет следить за файлами в каталоге `bundle
 - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `API_KEY` - [зарегистрироваться в yandex-разработчик](https://developer.tech.yandex.ru/services/)
-- `ROLLBAR` - [токен от rollbar](https://rollbar.com)
-- `DB_USER` - имя пользователя Postgre
-- `DB_NAME` - имя бд Postgre
-- `DB_PASSWORD` - пароль от бд Postgre
+- `DATABASE_URL` - url Postgre бд со всем данными. Например: postgres://myuser:password@localhost/myprojecе
+- `ROLLBAR_TOKEN` - ключ Rollbar.
 
 
 
@@ -181,7 +177,9 @@ Parcel будет следить за файлами в каталоге `bundle
     /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py migrate --noinput
     systemctl daemon-reload
     systemctl restart star-burger.service
-    curl -H "X-Rollbar-Access-Token: PROJECT ACESS TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "dc1f74dee5", "rollbar_name": "john", "local_username": "cin-cui", "comment": "Deployment has ended", "status": "succeeded"}'
+    COMMIT_HASH=`git rev-parse --short HEAD`
+    curl -H "X-Rollbar-Access-Token: $ROLLBAR_TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "'"$COMMIT_HASH"'", "rollbar_name": "john", "local_username": "user", "comment": "Deployment has ended", "status": "succeeded"}'
+
     echo Деплой прошел успешно
 
 Данный скрипт скачает код, установит зависимости, соберет статику и миграции, запустит npm, перезапустит все Systemd сервисы и сообщит о деплое в Rollbar. При успешном выполнении выведется "Деплой прошел успешно".
