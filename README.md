@@ -166,20 +166,16 @@ Parcel будет следить за файлами в каталоге `bundle
 
     #!/bin/bash
     set -e
-    curl -H "X-Rollbar-Access-Token: PROJECT ACESS TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "dc1f74dee5", "rollbar_name": "john", "local_username": "cin-cui", "comment": "Deployment has started", "status": "started"}'
+    cd /opt/Star-burger/
+    COMMIT_HASH=`git rev-parse --short HEAD`
+    curl -H "X-Rollbar-Access-Token: $ROLLBAR_TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "'"$COMMIT_HASH"'", "rollbar_name": "john", "local_username": "Matvey256", "comment": "Deployment has started", "status": "started"}'
     git --git-dir='/opt/Star-burger/.git' pull
     /opt/Star-burger/venv/bin/python -m pip install -r /opt/Star-burger/requirements.txt
-    sudo apt update
-    sudo apt install --yes nodejs
-    sudo apt install --yes npm
     npm ci --dev --prefix /opt/Star-burger
     /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py collectstatic --noinput
     /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py migrate --noinput
-    systemctl daemon-reload
     systemctl restart star-burger.service
-    COMMIT_HASH=`git rev-parse --short HEAD`
-    curl -H "X-Rollbar-Access-Token: $ROLLBAR_TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "'"$COMMIT_HASH"'", "rollbar_name": "john", "local_username": "user", "comment": "Deployment has ended", "status": "succeeded"}'
-
+    curl -H "X-Rollbar-Access-Token: $ROLLBAR_TOKEN" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "qa", "revision": "'"$COMMIT_HASH"'", "rollbar_name": "john", "local_username": "Matvey256", "comment": "Deployment has ended", "status": "succeeded"}'
     echo Деплой прошел успешно
 
 Данный скрипт скачает код, установит зависимости, соберет статику и миграции, запустит npm, перезапустит все Systemd сервисы и сообщит о деплое в Rollbar. При успешном выполнении выведется "Деплой прошел успешно".
