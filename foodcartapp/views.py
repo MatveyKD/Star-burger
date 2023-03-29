@@ -51,7 +51,7 @@ def banners_list_api(request):
         'indent': 4,
     })
 
-
+'''
 def product_list_api(request):
     products = Product.objects.select_related('category').available()
 
@@ -78,6 +78,7 @@ def product_list_api(request):
         'ensure_ascii': False,
         'indent': 4,
     })
+'''
 
 
 @transaction.atomic
