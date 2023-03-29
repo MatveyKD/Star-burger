@@ -55,7 +55,7 @@ def banners_list_api(request):
 def product_list_api(request):
     products = Product.objects.select_related('category').available()
 
-    dumped_products = []
+    dumped_products = list()
     for product in products:
         dumped_product = {
             'id': product.id,
