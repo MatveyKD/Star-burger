@@ -53,7 +53,6 @@ def banners_list_api(request):
 
 
 def product_list_api(request):
-    '''
     products = Product.objects.select_related('category').available()
 
     dumped_products = list()
@@ -78,7 +77,7 @@ def product_list_api(request):
     return JsonResponse(dumped_products, safe=False, json_dumps_params={
         'ensure_ascii': False,
         'indent': 4,
-    })'''
+    })
 
 
 @transaction.atomic
