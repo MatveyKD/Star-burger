@@ -172,6 +172,7 @@ Parcel будет следить за файлами в каталоге `bundle
     git --git-dir='/opt/Star-burger/.git' pull
     /opt/Star-burger/venv/bin/python -m pip install -r /opt/Star-burger/requirements.txt
     npm ci --dev --prefix /opt/Star-burger
+    ./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
     /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py collectstatic --noinput
     /opt/Star-burger/venv/bin/python /opt/Star-burger/manage.py migrate --noinput
     systemctl restart star-burger.service
